@@ -13,4 +13,15 @@ exports.handler = async function(event) {
   }
 
   return { statusCode: 401, body: JSON.stringify({ ok: false, msg: 'Username atau password salah.' }) };
+
+  [build]
+  functions = "netlify/functions"
+
+[build.environment]
+  SECRETS_SCAN_ENABLED = "false"
+
+[[redirects]]
+  from = "/api/auth"
+  to = "/.netlify/functions/auth"
+  status = 200
 };
