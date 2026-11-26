@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Panel — VaLeN</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff8e7;--ink:#111;--paper:#fff;--yellow:#ffd93d;--pink:#ff6b9d;--blue:#4d96ff;--green:#6bcb77;--orange:#ff9f45;--purple:#b79ced;--red:#ff4444;--border:3px solid var(--ink);--shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink);--radius:12px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Space Grotesk",system-ui,sans-serif;font-size:1rem;line-height:1.6;color:var(--ink);background:var(--bg) radial-gradient(var(--ink) 1px,transparent 1px) 0 0/24px 24px}
+h1,h2,h3{font-family:"Archivo Black",sans-serif;font-weight:400;text-transform:uppercase;margin:0;line-height:1.05}
+p{margin:0}a{color:inherit}
+:focus-visible{outline:4px solid var(--blue);outline-offset:3px}
+.icon{width:1.2em;height:1.2em;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:-.15em}
+.wrap{max-width:1100px;margin:0 auto;padding:2rem 1.25rem 4rem}
+.card{background:var(--paper);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.topbar{background:var(--paper);border-bottom:var(--border);position:sticky;top:0;z-index:30}
+.topbar .wrap{padding-block:.8rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.logo{font-family:"Archivo Black",sans-serif;font-size:1.1rem;text-decoration:none;background:var(--pink);border:var(--border);border-radius:8px;padding:.1rem .6rem;box-shadow:3px 3px 0 var(--ink)}
+.topbar-right{display:flex;align-items:center;gap:.7rem}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.1rem;font:700 .95rem "Space Grotesk",sans-serif;color:var(--ink);background:var(--yellow);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);cursor:pointer;transition:transform .12s,box-shadow .12s;text-decoration:none}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:none}
+.btn.green{background:var(--green)}.btn.pink{background:var(--pink)}.btn.red{background:var(--red);color:#fff}.btn.white{background:var(--paper)}.btn.blue{background:var(--blue)}.btn.sm{padding:.35rem .7rem;font-size:.85rem;box-shadow:3px 3px 0 var(--ink)}
+#loginScreen{min-height:100vh;display:grid;place-items:center;padding:1.25rem}
+#loginScreen[hidden]{display:none}
+.login-box{padding:2rem;max-width:380px;width:100%;background:var(--blue)}
+.login-box h1{font-size:2rem;margin-bottom:1.5rem;background:var(--yellow);border:var(--border);box-shadow:3px 3px 0 var(--ink);padding:.2rem .7rem;display:inline-block;transform:rotate(-2deg)}
+.login-err{background:var(--red);color:#fff;border:var(--border);border-radius:8px;padding:.5rem .9rem;font-weight:700;margin-top:.8rem;display:none}
+.login-err.show{display:block}
+.field{display:grid;gap:.3rem;font-weight:700}
+.field input,.field textarea,.field select{font:inherit;padding:.65rem .9rem;border:var(--border);border-radius:10px;background:var(--paper);color:var(--ink);box-shadow:3px 3px 0 var(--ink);width:100%}
+.field textarea{min-height:90px;resize:vertical}
+#adminScreen[hidden]{display:none}
+.page-title{font-size:clamp(1.6rem,4vw,2.4rem);background:var(--yellow);border:var(--border);box-shadow:var(--shadow-sm);padding:.3rem .9rem;transform:rotate(-1deg);display:inline-block;margin-bottom:2rem}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:2.5rem}
+.stat-box{padding:1.1rem 1.4rem}.stat-box strong{font-family:"Archivo Black",sans-serif;font-size:2.4rem;line-height:1;display:block}
+.stat-box:nth-child(1){background:var(--pink)}.stat-box:nth-child(2){background:var(--green)}.stat-box:nth-child(3){background:var(--blue)}.stat-box:nth-child(4){background:var(--orange)}
+.tabs{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.75rem}
+.tab{padding:.5rem 1.1rem;font:700 .95rem "Space Grotesk",sans-serif;color:var(--ink);background:var(--paper);border:var(--border);border-radius:var(--radius);cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+.tab:hover{background:var(--yellow)}.tab.active{background:var(--ink);color:var(--paper)}
+.pane[hidden]{display:none}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:500px}
+th,td{text-align:left;padding:.7rem .9rem;border-bottom:2px solid var(--ink);font-size:.95rem}
+th{font-family:"Archivo Black",sans-serif;background:var(--ink);color:var(--paper)}
+tr:nth-child(even) td{background:#fdf5de}
+tr:hover td{background:var(--yellow)}
+.actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.add-form{padding:1.5rem;margin-bottom:1.75rem}
+.add-form h3{font-size:1.3rem;margin-bottom:1rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-row.triple{grid-template-columns:1fr 1fr 1fr}
+.form-full{grid-column:1/-1}
+.form-actions{display:flex;gap:.8rem;margin-top:.8rem}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;display:grid;place-items:center;padding:1rem}
+.overlay[hidden]{display:none}
+.modal{padding:1.75rem;max-width:480px;width:100%;background:var(--paper);position:relative;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:1.3rem;margin-bottom:1.25rem}
+.modal-actions{display:flex;gap:.8rem;margin-top:1.25rem}
+.modal-close{position:absolute;top:.8rem;right:.8rem}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translate(-50%,200%);display:flex;align-items:center;gap:.6rem;background:var(--green);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:.8rem 1.4rem;font-weight:700;transition:transform .3s;z-index:99;white-space:nowrap}
+.toast.show{transform:translate(-50%,0)}.toast.err{background:var(--red);color:#fff}
+@media(max-width:800px){.stats-row{grid-template-columns:repeat(2,1fr)}.form-row,.form-row.triple{grid-template-columns:1fr}}
+@media(max-width:500px){.stats-row{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+    <symbol id="i-project" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></symbol>
+    <symbol id="i-skill" viewBox="0 0 24 24"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M17.9 17.9A11 11 0 0 1 12 20C5 20 1 12 1 12a18.5 18.5 0 0 1 5.1-6.9M9.9 4.2A10 10 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.2 3.4M1 1l22 22"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></symbol>
+  </defs>
+</svg>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="card login-box">
+    <h1>Admin</h1>
+    <form id="loginForm" autocomplete="off">
+      <div style="display:grid;gap:.9rem">
+        <div class="field"><label for="uname">Username</label><input id="uname" type="text" placeholder="admin" required></div>
+        <div class="field" style="position:relative">
+          <label for="pw">Password</label>
+          <input id="pw" type="password" placeholder="••••••" required>
+          <button type="button" id="pwToggle" class="btn white sm" style="position:absolute;right:.4rem;bottom:.4rem;padding:.3rem .5rem;box-shadow:none;border:2px solid var(--ink)" aria-label="Lihat password">
+            <svg class="icon"><use id="eyeIcon" href="#i-eye"/></svg>
+          </button>
+        </div>
+        <button class="btn green" type="submit"><svg class="icon"><use href="#i-lock"/></svg> Masuk</button>
+      </div>
+      <div class="login-err" id="loginErr">Username atau password salah.</div>
+    </form>
+    <p style="font-size:.8rem;margin-top:1rem;opacity:.7">Default: admin / admin123</p>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="adminScreen" hidden>
+  <div class="topbar">
+    <div class="wrap">
+      <a href="index.html" class="logo" target="_blank">VaLeN.</a>
+      <div class="topbar-right">
+        <span style="font-weight:700" id="greetUser"></span>
+        <button class="btn pink sm" id="logoutBtn"><svg class="icon"><use href="#i-logout"/></svg> Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <h2 class="page-title">Admin Panel</h2>
+
+    <div class="stats-row">
+      <div class="card stat-box"><strong id="stMusic">0</strong>Lagu</div>
+      <div class="card stat-box"><strong id="stProyek">0</strong>Proyek</div>
+      <div class="card stat-box"><strong id="stSkill">0</strong>Skill</div>
+      <div class="card stat-box"><strong id="stPengalaman">0</strong>Pengalaman</div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" role="tab" data-tab="musik">
+        <svg class="icon"><use href="#i-music"/></svg> Musik</button>
+      <button class="tab" role="tab" data-tab="proyek">
+        <svg class="icon"><use href="#i-project"/></svg> Proyek</button>
+      <button class="tab" role="tab" data-tab="skill">
+        <svg class="icon"><use href="#i-skill"/></svg> Skill</button>
+      <button class="tab" role="tab" data-tab="pengalaman">
+        <svg class="icon"><use href="#i-user"/></svg> Pengalaman</button>
+      <button class="tab" role="tab" data-tab="profil">
+        <svg class="icon"><use href="#i-edit"/></svg> Profil</button>
+    </div>
+
+    <!-- MUSIK -->
+    <div class="pane" id="pane-musik">
+      <div class="card add-form" style="background:var(--green)">
+        <h3><svg class="icon"><use href="#i-plus"/></svg> Tambah Lagu</h3>
+        <form id="formMusik">
+          <div class="form-row">
+            <div class="field"><label>Judul *<input type="text" name="title" required placeholder="Nama lagu"></label></div>
+            <div class="field"><label>Artis *<input type="text" name="artist" required placeholder="Nama artis"></label></div>
+          </div>
+          <div class="form-row" style="margin-top:.9rem">
+            <div class="field"><label>URL / Path MP3 *<input type="text" name="src" required placeholder="https://... atau lagu/file.mp3"></label></div>
+            <div class="field"><label>Cover URL (opsional)<input type="text" name="cover" placeholder="https://..."></label></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn green" type="submit"><svg class="icon"><use href="#i-save"/></svg> Simpan</button>
+            <button class="btn white" type="reset">Reset</button>
+          </div>
+        </form>
+      </div>
+      <div class="card" style="padding:1.25rem">
+        <div class="tbl-wrap">
+          <table id="tblMusik">
+            <thead><tr><th>#</th><th>Judul</th><th>Artis</th><th>Preview</th><th>Aksi</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROYEK -->
+    <div class="pane" id="pane-proyek" hidden>
+      <div class="card add-form" style="background:var(--purple)">
+        <h3><svg class="icon"><use href="#i-plus"/></svg> Tambah Proyek</h3>
+        <form id="formProyek">
+          <div class="form-row">
+            <div class="field"><label>Nama Proyek *<input type="text" name="nama" required placeholder="Nama proyek"></label></div>
+            <div class="field"><label>Link URL<input type="url" name="url" placeholder="https://..."></label></div>
+          </div>
+          <div class="field form-full" style="margin-top:.9rem"><label>Deskripsi *<textarea name="desc" required placeholder="Deskripsi singkat"></textarea></label></div>
+          <div class="field" style="margin-top:.9rem"><label>Tag (pisah koma)<input type="text" name="tags" placeholder="React, Node, API"></label></div>
+          <div class="form-actions">
+            <button class="btn green" type="submit"><svg class="icon"><use href="#i-save"/></svg> Simpan</button>
+            <button class="btn white" type="reset">Reset</button>
+          </div>
+        </form>
+      </div>
+      <div class="card" style="padding:1.25rem">
+        <div class="tbl-wrap">
+          <table id="tblProyek">
+            <thead><tr><th>#</th><th>Nama</th><th>Deskripsi</th><th>Tag</th><th>Aksi</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILL -->
+    <div class="pane" id="pane-skill" hidden>
+      <div class="card add-form" style="background:var(--blue)">
+        <h3><svg class="icon"><use href="#i-plus"/></svg> Tambah Skill</h3>
+        <form id="formSkill">
+          <div class="form-row">
+            <div class="field"><label>Kategori *<input type="text" name="kategori" required placeholder="Frontend, Backend…"></label></div>
+            <div class="field"><label>Skill (pisah koma) *<input type="text" name="items" required placeholder="React, TypeScript"></label></div>
+          </div>
+          <div class="form-actions" style="margin-top:.9rem">
+            <button class="btn green" type="submit"><svg class="icon"><use href="#i-save"/></svg> Simpan</button>
+            <button class="btn white" type="reset">Reset</button>
+          </div>
+        </form>
+      </div>
+      <div class="card" style="padding:1.25rem">
+        <div class="tbl-wrap">
+          <table id="tblSkill">
+            <thead><tr><th>#</th><th>Kategori</th><th>Skill</th><th>Aksi</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENGALAMAN -->
+    <div class="pane" id="pane-pengalaman" hidden>
+      <div class="card add-form" style="background:var(--orange)">
+        <h3><svg class="icon"><use href="#i-plus"/></svg> Tambah Pengalaman</h3>
+        <form id="formPengalaman">
+          <div class="form-row">
+            <div class="field"><label>Jabatan *<input type="text" name="jabatan" required placeholder="Frontend Developer"></label></div>
+            <div class="field"><label>Perusahaan *<input type="text" name="perusahaan" required placeholder="Nama perusahaan"></label></div>
+          </div>
+          <div class="form-row" style="margin-top:.9rem">
+            <div class="field"><label>Periode *<input type="text" name="periode" required placeholder="2023 — Sekarang"></label></div>
+            <div class="field"><label>Deskripsi<input type="text" name="desc" placeholder="Deskripsi singkat"></label></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn green" type="submit"><svg class="icon"><use href="#i-save"/></svg> Simpan</button>
+            <button class="btn white" type="reset">Reset</button>
+          </div>
+        </form>
+      </div>
+      <div class="card" style="padding:1.25rem">
+        <div class="tbl-wrap">
+          <table id="tblPengalaman">
+            <thead><tr><th>#</th><th>Jabatan</th><th>Perusahaan</th><th>Periode</th><th>Aksi</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFIL -->
+    <div class="pane" id="pane-profil" hidden>
+      <div class="card" style="padding:1.75rem;max-width:600px">
+        <h3 style="margin-bottom:1.25rem;font-size:1.3rem">Edit Profil</h3>
+        <form id="formProfil">
+          <div style="display:grid;gap:1rem">
+            <div class="field"><label>Nama<input type="text" name="nama" placeholder="VaLeN"></label></div>
+            <div class="field"><label>Tagline<input type="text" name="tagline" placeholder="Web Developer & UI Designer"></label></div>
+            <div class="field"><label>Bio<textarea name="bio" placeholder="Ceritakan tentang dirimu..."></textarea></label></div>
+            <div class="field"><label>Email<input type="email" name="email" placeholder="valz@via.tokyo.jp"></label></div>
+            <div class="field"><label>GitHub<input type="url" name="github" placeholder="https://github.com/404oval"></label></div>
+            <div class="field"><label>LinkedIn<input type="url" name="linkedin" placeholder="https://linkedin.com/in/valen"></label></div>
+          </div>
+          <div class="form-actions" style="margin-top:1rem">
+            <button class="btn green" type="submit"><svg class="icon"><use href="#i-save"/></svg> Simpan Profil</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIT -->
+<div class="overlay" id="editOverlay" hidden role="dialog" aria-modal="true">
+  <div class="card modal" id="editModal">
+    <button class="btn white sm modal-close" id="modalClose" aria-label="Tutup"><svg class="icon"><use href="#i-close"/></svg></button>
+    <h3 id="modalTitle">Edit</h3>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn green" id="modalSave"><svg class="icon"><use href="#i-save"/></svg> Simpan</button>
+      <button class="btn white" id="modalCancel">Batal</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<script>
+const DB = {
+  get: k => JSON.parse(localStorage.getItem('valen_' + k) || 'null'),
+  set: (k, v) => localStorage.setItem('valen_' + k, JSON.stringify(v))
+};
+
+function initData() {
+  if (!DB.get('musik')) DB.set('musik', [
+    { id:1, title:"Lagu Contoh 1", artist:"SoundHelix", src:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", cover:"" },
+    { id:2, title:"Lagu Contoh 2", artist:"SoundHelix", src:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", cover:"" }
+  ]);
+  if (!DB.get('proyek')) DB.set('proyek', [
+    { id:1, nama:"Toko Online Kopi", desc:"E-commerce lengkap", url:"#", tags:"React, Node" },
+    { id:2, nama:"Dashboard Analitik", desc:"Visualisasi real-time", url:"#", tags:"Chart.js" }
+  ]);
+  if (!DB.get('skill')) DB.set('skill', [
+    { id:1, kategori:"Frontend", items:"HTML, CSS, JavaScript, React" },
+    { id:2, kategori:"Backend", items:"Node.js, Express, PostgreSQL" }
+  ]);
+  if (!DB.get('pengalaman')) DB.set('pengalaman', [
+    { id:1, jabatan:"Frontend Developer", perusahaan:"Studio Kreatif", periode:"2023 — Sekarang", desc:"" }
+  ]);
+  if (!DB.get('profil')) DB.set('profil', { nama:"VaLeN", tagline:"Web Developer & UI Designer", bio:"", email:"valz@via.tokyo.jp", github:"", linkedin:"" });
+}
+
+function newId(arr) { return arr.length ? Math.max(...arr.map(x => x.id)) + 1 : 1; }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+const $ = id => document.getElementById(id);
+const toastEl = $('toast');
+let toastTimer;
+function showToast(msg, err=false) {
+  clearTimeout(toastTimer);
+  toastEl.textContent = msg;
+  toastEl.className = 'toast show' + (err ? ' err' : '');
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3000);
+}
+
+// ===== LOGIN =====
+$('pwToggle').onclick = () => {
+  const pw = $('pw'), show = pw.type === 'password';
+  pw.type = show ? 'text' : 'password';
+  $('eyeIcon').setAttribute('href', show ? '#i-eye-off' : '#i-eye');
+};
+$('loginForm').onsubmit = e => {
+  e.preventDefault();
+  if ($('uname').value.trim() === 'admin' && $('pw').value === 'admin123') {
+    $('loginScreen').hidden = true;
+    $('adminScreen').hidden = false;
+    $('greetUser').textContent = 'Halo, admin';
+    initData(); renderAll();
+  } else {
+    $('loginErr').classList.add('show');
+    $('pw').value = '';
+  }
+};
+$('logoutBtn').onclick = () => {
+  $('adminScreen').hidden = true;
+  $('loginScreen').hidden = false;
+  $('uname').value = ''; $('pw').value = '';
+  $('loginErr').classList.remove('show');
+};
+
+// ===== TABS =====
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.pane').forEach(p => p.hidden = true);
+    btn.classList.add('active');
+    $('pane-' + btn.dataset.tab).hidden = false;
+  };
+});
+
+// ===== STATS =====
+function updateStats() {
+  $('stMusic').textContent      = (DB.get('musik') || []).length;
+  $('stProyek').textContent     = (DB.get('proyek') || []).length;
+  $('stSkill').textContent      = (DB.get('skill') || []).length;
+  $('stPengalaman').textContent = (DB.get('pengalaman') || []).length;
+}
+function renderAll() { renderMusik(); renderProyek(); renderSkill(); renderPengalaman(); renderProfil(); updateStats(); }
+
+// ===== MODAL =====
+let modalSaveFn = null;
+function openModal(title, bodyHTML, saveFn) {
+  $('modalTitle').textContent = title;
+  $('modalBody').innerHTML = bodyHTML;
+  modalSaveFn = saveFn;
+  $('editOverlay').hidden = false;
+}
+function closeModal() { $('editOverlay').hidden = true; modalSaveFn = null; }
+$('modalClose').onclick = closeModal;
+$('modalCancel').onclick = closeModal;
+$('editOverlay').onclick = e => { if (e.target === $('editOverlay')) closeModal(); };
+$('modalSave').onclick = () => { if (modalSaveFn) modalSaveFn(); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ===== MUSIK =====
+function renderMusik() {
+  const data = DB.get('musik') || [];
+  const tbody = $('tblMusik').querySelector('tbody');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;opacity:.6">Belum ada lagu.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map((m, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${esc(m.title)}</strong></td>
+      <td>${esc(m.artist)}</td>
+      <td><audio controls src="${esc(m.src)}" style="height:32px;width:180px"></audio></td>
+      <td><div class="actions">
+        <button class="btn white sm" onclick="editMusik(${m.id})"><svg class="icon"><use href="#i-edit"/></svg></button>
+        <button class="btn red sm" onclick="hapusMusik(${m.id})"><svg class="icon"><use href="#i-trash"/></svg></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+$('formMusik').onsubmit = e => {
+  e.preventDefault();
+  const f = e.target, data = DB.get('musik') || [];
+  data.push({ id:newId(data), title:f.title.value.trim(), artist:f.artist.value.trim(), src:f.src.value.trim(), cover:f.cover.value.trim() });
+  DB.set('musik', data); f.reset(); renderMusik(); updateStats();
+  showToast('Lagu berhasil ditambahkan!');
+};
+
+window.hapusMusik = id => {
+  if (!confirm('Hapus lagu ini?')) return;
+  DB.set('musik', (DB.get('musik') || []).filter(m => m.id !== id));
+  renderMusik(); updateStats(); showToast('Lagu dihapus.');
+};
+
+window.editMusik = id => {
+  const m = (DB.get('musik') || []).find(x => x.id === id);
+  if (!m) return;
+  openModal('Edit Lagu', `
+    <div style="display:grid;gap:.9rem">
+      <div class="field"><label>Judul<input id="eTitle" type="text" value="${esc(m.title)}"></label></div>
+      <div class="field"><label>Artis<input id="eArtist" type="text" value="${esc(m.artist)}"></label></div>
+      <div class="field"><label>URL / Path MP3<input id="eSrc" type="text" value="${esc(m.src)}"></label></div>
+      <div class="field"><label>Cover URL<input id="eCover" type="text" value="${esc(m.cover)}"></label></div>
+    </div>`, () => {
+    const data = DB.get('musik') || [];
+    const idx = data.findIndex(x => x.id === id);
+    data[idx] = { id, title:$('eTitle').value.trim(), artist:$('eArtist').value.trim(), src:$('eSrc').value.trim(), cover:$('eCover').value.trim() };
+    DB.set('musik', data); closeModal(); renderMusik();
+    showToast('Lagu diperbarui!');
+  });
+};
+
+// ===== PROYEK =====
+function renderProyek() {
+  const data = DB.get('proyek') || [];
+  const tbody = $('tblProyek').querySelector('tbody');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;opacity:.6">Belum ada proyek.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map((p, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${esc(p.nama)}</strong>${p.url && p.url !== '#' ? `<br><a href="${esc(p.url)}" target="_blank" style="font-size:.85rem">${esc(p.url)}</a>` : ''}</td>
+      <td style="max-width:200px">${esc(p.desc)}</td>
+      <td>${esc(p.tags)}</td>
+      <td><div class="actions">
+        <button class="btn white sm" onclick="editProyek(${p.id})"><svg class="icon"><use href="#i-edit"/></svg></button>
+        <button class="btn red sm" onclick="hapusProyek(${p.id})"><svg class="icon"><use href="#i-trash"/></svg></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+$('formProyek').onsubmit = e => {
+  e.preventDefault();
+  const f = e.target, data = DB.get('proyek') || [];
+  data.push({ id:newId(data), nama:f.nama.value.trim(), desc:f.desc.value.trim(), url:f.url.value.trim(), tags:f.tags.value.trim() });
+  DB.set('proyek', data); f.reset(); renderProyek(); updateStats();
+  showToast('Proyek berhasil ditambahkan!');
+};
+
+window.hapusProyek = id => {
+  if (!confirm('Hapus proyek ini?')) return;
+  DB.set('proyek', (DB.get('proyek') || []).filter(p => p.id !== id));
+  renderProyek(); updateStats(); showToast('Proyek dihapus.');
+};
+
+window.editProyek = id => {
+  const p = (DB.get('proyek') || []).find(x => x.id === id);
+  if (!p) return;
+  openModal('Edit Proyek', `
+    <div style="display:grid;gap:.9rem">
+      <div class="field"><label>Nama<input id="eNama" type="text" value="${esc(p.nama)}"></label></div>
+      <div class="field"><label>URL<input id="eUrl" type="text" value="${esc(p.url)}"></label></div>
+      <div class="field"><label>Deskripsi<textarea id="eDesc">${esc(p.desc)}</textarea></label></div>
+      <div class="field"><label>Tag<input id="eTags" type="text" value="${esc(p.tags)}"></label></div>
+    </div>`, () => {
+    const data = DB.get('proyek') || [];
+    const idx = data.findIndex(x => x.id === id);
+    data[idx] = { id, nama:$('eNama').value.trim(), desc:$('eDesc').value.trim(), url:$('eUrl').value.trim(), tags:$('eTags').value.trim() };
+    DB.set('proyek', data); closeModal(); renderProyek();
+    showToast('Proyek diperbarui!');
+  });
+};
+
+// ===== SKILL =====
+function renderSkill() {
+  const data = DB.get('skill') || [];
+  const tbody = $('tblSkill').querySelector('tbody');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;opacity:.6">Belum ada skill.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map((s, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${esc(s.kategori)}</strong></td>
+      <td>${esc(s.items)}</td>
+      <td><div class="actions">
+        <button class="btn white sm" onclick="editSkill(${s.id})"><svg class="icon"><use href="#i-edit"/></svg></button>
+        <button class="btn red sm" onclick="hapusSkill(${s.id})"><svg class="icon"><use href="#i-trash"/></svg></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+$('formSkill').onsubmit = e => {
+  e.preventDefault();
+  const f = e.target, data = DB.get('skill') || [];
+  data.push({ id:newId(data), kategori:f.kategori.value.trim(), items:f.items.value.trim() });
+  DB.set('skill', data); f.reset(); renderSkill(); updateStats();
+  showToast('Skill berhasil ditambahkan!');
+};
+
+window.hapusSkill = id => {
+  if (!confirm('Hapus skill ini?')) return;
+  DB.set('skill', (DB.get('skill') || []).filter(s => s.id !== id));
+  renderSkill(); updateStats(); showToast('Skill dihapus.');
+};
+
+window.editSkill = id => {
+  const s = (DB.get('skill') || []).find(x => x.id === id);
+  if (!s) return;
+  openModal('Edit Skill', `
+    <div style="display:grid;gap:.9rem">
+      <div class="field"><label>Kategori<input id="eKat" type="text" value="${esc(s.kategori)}"></label></div>
+      <div class="field"><label>Skill (pisah koma)<input id="eItems" type="text" value="${esc(s.items)}"></label></div>
+    </div>`, () => {
+    const data = DB.get('skill') || [];
+    const idx = data.findIndex(x => x.id === id);
+    data[idx] = { id, kategori:$('eKat').value.trim(), items:$('eItems').value.trim() };
+    DB.set('skill', data); closeModal(); renderSkill();
+    showToast('Skill diperbarui!');
+  });
+};
+
+// ===== PENGALAMAN =====
+function renderPengalaman() {
+  const data = DB.get('pengalaman') || [];
+  const tbody = $('tblPengalaman').querySelector('tbody');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;opacity:.6">Belum ada pengalaman.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map((x, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${esc(x.jabatan)}</strong></td>
+      <td>${esc(x.perusahaan)}</td>
+      <td>${esc(x.periode)}</td>
+      <td><div class="actions">
+        <button class="btn white sm" onclick="editPengalaman(${x.id})"><svg class="icon"><use href="#i-edit"/></svg></button>
+        <button class="btn red sm" onclick="hapusPengalaman(${x.id})"><svg class="icon"><use href="#i-trash"/></svg></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+$('formPengalaman').onsubmit = e => {
+  e.preventDefault();
+  const f = e.target, data = DB.get('pengalaman') || [];
+  data.push({ id:newId(data), jabatan:f.jabatan.value.trim(), perusahaan:f.perusahaan.value.trim(), periode:f.periode.value.trim(), desc:f.desc.value.trim() });
+  DB.set('pengalaman', data); f.reset(); renderPengalaman(); updateStats();
+  showToast('Pengalaman berhasil ditambahkan!');
+};
+
+window.hapusPengalaman = id => {
+  if (!confirm('Hapus pengalaman ini?')) return;
+  DB.set('pengalaman', (DB.get('pengalaman') || []).filter(x => x.id !== id));
+  renderPengalaman(); updateStats(); showToast('Pengalaman dihapus.');
+};
+
+window.editPengalaman = id => {
+  const x = (DB.get('pengalaman') || []).find(d => d.id === id);
+  if (!x) return;
+  openModal('Edit Pengalaman', `
+    <div style="display:grid;gap:.9rem">
+      <div class="field"><label>Jabatan<input id="eJab" type="text" value="${esc(x.jabatan)}"></label></div>
+      <div class="field"><label>Perusahaan<input id="ePerus" type="text" value="${esc(x.perusahaan)}"></label></div>
+      <div class="field"><label>Periode<input id="ePer" type="text" value="${esc(x.periode)}"></label></div>
+      <div class="field"><label>Deskripsi<input id="eDesc2" type="text" value="${esc(x.desc)}"></label></div>
+    </div>`, () => {
+    const data = DB.get('pengalaman') || [];
+    const idx = data.findIndex(d => d.id === id);
+    data[idx] = { id, jabatan:$('eJab').value.trim(), perusahaan:$('ePerus').value.trim(), periode:$('ePer').value.trim(), desc:$('eDesc2').value.trim() };
+    DB.set('pengalaman', data); closeModal(); renderPengalaman();
+    showToast('Pengalaman diperbarui!');
+  });
+};
+
+// ===== PROFIL =====
+function renderProfil() {
+  const p = DB.get('profil') || {};
+  const f = $('formProfil');
+  f.nama.value     = p.nama     || '';
+  f.tagline.value  = p.tagline  || '';
+  f.bio.value      = p.bio      || '';
+  f.email.value    = p.email    || '';
+  f.github.value   = p.github   || '';
+  f.linkedin.value = p.linkedin || '';
+}
+
+$('formProfil').onsubmit = e => {
+  e.preventDefault();
+  const f = e.target;
+  DB.set('profil', {
+    nama:     f.nama.value.trim(),
+    tagline:  f.tagline.value.trim(),
+    bio:      f.bio.value.trim(),
+    email:    f.email.value.trim(),
+    github:   f.github.value.trim(),
+    linkedin: f.linkedin.value.trim()
+  });
+  showToast('Profil berhasil disimpan!');
+};
+</script>
+</body>
+</html>
