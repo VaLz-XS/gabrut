@@ -358,17 +358,8 @@ $('loginForm').onsubmit = async e => {
       $('pw').value = '';
     }
   } catch {
-    // Fallback login lokal (saat development / belum deploy)
-    if ($('uname').value.trim() === 'admin' && $('pw').value === 'admin123') {
-      $('loginScreen').hidden = true;
-      $('adminScreen').hidden = false;
-      $('greetUser').textContent = 'Halo, admin (lokal)';
-      initData(); renderAll();
-    } else {
-      errEl.textContent = 'Gagal konek ke server.';
-      errEl.classList.add('show');
-      $('pw').value = '';
-    }
+    errEl.textContent = 'Tidak dapat terhubung ke server. Coba lagi.';
+    errEl.classList.add('show');
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<svg class="icon"><use href="#i-lock"/></svg> Masuk';
