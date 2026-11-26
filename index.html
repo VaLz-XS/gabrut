@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portof - VaLeN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff8e7;--ink:#111;--paper:#fff;--yellow:#ffd93d;--pink:#ff6b9d;--blue:#4d96ff;--green:#6bcb77;--orange:#ff9f45;--purple:#b79ced;--border:3px solid var(--ink);--shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink);--radius:12px}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;font-family:"Space Grotesk",system-ui,sans-serif;font-size:1.05rem;line-height:1.6;color:var(--ink);background-color:var(--bg);background-image:radial-gradient(var(--ink) 1px,transparent 1px);background-size:24px 24px}
+body.is-loading{overflow:hidden}
+h1,h2,h3{font-family:"Archivo Black",sans-serif;font-weight:400;line-height:1.05;margin:0;text-transform:uppercase}
+p{margin:0}a{color:inherit}
+.container{width:100%;max-width:1100px;margin-inline:auto;padding-inline:1.25rem}
+section{padding-block:4.5rem}
+:focus-visible{outline:4px solid var(--blue);outline-offset:3px}
+
+/* SVG icons */
+.icon{width:1.2em;height:1.2em;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:-.2em}
+
+/* Reusable */
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.4rem;font:700 1rem "Space Grotesk",sans-serif;text-decoration:none;color:var(--ink);background:var(--yellow);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);cursor:pointer;transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(4px,4px);box-shadow:none}
+.btn.pink{background:var(--pink)}.btn.white{background:var(--paper)}
+.card{background:var(--paper);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.section-title{display:inline-block;font-size:clamp(1.8rem,5vw,3rem);background:var(--yellow);border:var(--border);box-shadow:var(--shadow-sm);padding:.3rem .9rem;transform:rotate(-1.5deg);margin-bottom:2.5rem}
+.tag{display:inline-block;padding:.2rem .7rem;font-weight:700;font-size:.85rem;border:2px solid var(--ink);border-radius:999px;background:var(--paper)}
+.tags{display:flex;flex-wrap:wrap;gap:.5rem}
+
+/* Navbar */
+.nav{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:var(--border)}
+.nav .container{display:flex;align-items:center;justify-content:space-between;min-height:70px;gap:1rem}
+.logo{font-family:"Archivo Black",sans-serif;font-size:1.2rem;text-decoration:none;background:var(--pink);border:var(--border);border-radius:8px;padding:.15rem .7rem;box-shadow:3px 3px 0 var(--ink)}
+.nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none;margin:0;padding:0}
+.nav-links a{font-weight:700;text-decoration:none;padding:.2rem .3rem}
+.nav-links a:not(.btn):hover{background:var(--yellow)}
+.nav-links .btn{padding:.5rem 1rem}
+.menu-btn{display:none;padding:.4rem .8rem}
+
+/* Hero */
+.hero{padding-block:4rem 5rem}
+.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:3rem;align-items:center}
+.sticker{display:inline-flex;align-items:center;gap:.5rem;background:var(--green);border:var(--border);border-radius:999px;padding:.3rem 1rem;font-weight:700;transform:rotate(-3deg);box-shadow:3px 3px 0 var(--ink);margin-bottom:1.5rem}
+.hero h1{font-size:clamp(2.6rem,7vw,5rem);margin-bottom:1.5rem}
+.hero mark{background:var(--yellow);padding:0 .25em;border:var(--border);display:inline-block;transform:rotate(-2deg);box-shadow:var(--shadow-sm)}
+.lead{font-size:1.2rem;max-width:34em;margin-bottom:2rem}
+.hero-actions{display:flex;flex-wrap:wrap;gap:1rem}
+.profile{padding:1.25rem;background:var(--blue);transform:rotate(2deg)}
+.avatar{aspect-ratio:1;background:var(--yellow);border:var(--border);border-radius:var(--radius);display:grid;place-items:center}
+.avatar .icon{width:55%;height:55%;stroke-width:1.4}
+.profile-meta{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;font-weight:700}
+.status{display:inline-flex;align-items:center;gap:.4rem;background:var(--green);border:2px solid var(--ink);border-radius:999px;padding:.1rem .7rem;font-size:.85rem}
+.status::before{content:"";width:.6em;height:.6em;border-radius:50%;background:var(--ink)}
+
+/* Marquee */
+.marquee{background:var(--ink);color:var(--yellow);border-block:var(--border);overflow:hidden;white-space:nowrap;transform:rotate(-1deg);margin-block:1rem}
+.marquee-track{display:inline-block;padding-block:.8rem;animation:marquee 22s linear infinite;font-family:"Archivo Black",sans-serif;text-transform:uppercase;font-size:1.3rem}
+.marquee-track span{margin-inline:1.2rem;display:inline-flex;align-items:center;gap:2.4rem}
+.marquee-track .icon{fill:currentColor;stroke-width:1.5}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* About */
+.about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:2rem}
+.about-text{padding:1.75rem}.about-text p+p{margin-top:1rem}
+.stats{display:grid;gap:1rem}
+.stat{padding:1.1rem 1.4rem;display:flex;align-items:baseline;gap:1rem}
+.stat strong{font-family:"Archivo Black",sans-serif;font-size:2.6rem;line-height:1}
+.stat:nth-child(1){background:var(--pink)}.stat:nth-child(2){background:var(--green)}.stat:nth-child(3){background:var(--orange)}
+
+/* Skills */
+.skills-grid,.projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.75rem}
+.skill-card{padding:1.5rem}.skill-card h3{font-size:1.3rem;margin-bottom:1rem}
+.skill-card:nth-child(1){background:var(--purple)}.skill-card:nth-child(2){background:var(--yellow)}.skill-card:nth-child(3){background:var(--green)}
+
+/* Projects */
+.project{display:flex;flex-direction:column;text-decoration:none;overflow:hidden;transition:transform .15s,box-shadow .15s}
+.project:hover{transform:translate(-4px,-4px);box-shadow:10px 10px 0 var(--ink)}
+.project-thumb{height:150px;display:grid;place-items:center;border-bottom:var(--border)}
+.project-thumb .icon{width:4.2rem;height:4.2rem;stroke-width:1.6}
+.project:nth-child(1) .project-thumb{background:var(--pink)}
+.project:nth-child(2) .project-thumb{background:var(--blue)}
+.project:nth-child(3) .project-thumb{background:var(--green)}
+.project:nth-child(4) .project-thumb{background:var(--orange)}
+.project:nth-child(5) .project-thumb{background:var(--purple)}
+.project:nth-child(6) .project-thumb{background:var(--yellow)}
+.project-body{padding:1.25rem;display:flex;flex-direction:column;gap:.75rem;flex:1}
+.project-body h3{font-size:1.2rem}.project-body .tags{margin-top:auto}
+
+/* Experience */
+.timeline{display:grid;gap:1.5rem;border-left:5px solid var(--ink);padding-left:1.75rem;margin-left:.5rem}
+.job{padding:1.4rem;position:relative}
+.job::before{content:"";position:absolute;left:calc(-1.75rem - 14px);top:1.6rem;width:22px;height:22px;background:var(--pink);border:var(--border);border-radius:50%}
+.date{display:inline-block;background:var(--yellow);border:2px solid var(--ink);padding:0 .6rem;font-weight:700;font-size:.85rem;margin-bottom:.5rem}
+.job h3{font-size:1.15rem;margin-bottom:.3rem}
+
+/* Contact */
+.contact-box{padding:clamp(1.5rem,4vw,3rem);background:var(--pink);display:grid;grid-template-columns:1fr 1.2fr;gap:2.5rem}
+.contact-box h2{font-size:clamp(2rem,5vw,3.4rem);margin-bottom:1rem}
+.contact-links{list-style:none;padding:0;margin:1.5rem 0 0;display:grid;gap:.7rem}
+.contact-links li{display:flex;align-items:center;gap:.6rem}
+.contact-links a{font-weight:700}
+form{display:grid;gap:1rem}
+label{font-weight:700;display:grid;gap:.3rem}
+input,textarea{font:inherit;padding:.75rem .9rem;border:var(--border);border-radius:10px;background:var(--paper);color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
+textarea{min-height:120px;resize:vertical}
+footer{background:var(--ink);color:var(--paper);border-top:var(--border);padding-block:1.75rem;text-align:center;font-weight:500}
+footer span.f{display:inline-flex;align-items:center;gap:.4rem;flex-wrap:wrap;justify-content:center}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translate(-50%,200%);display:flex;align-items:center;gap:.6rem;background:var(--green);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:.8rem 1.4rem;font-weight:700;transition:transform .3s;z-index:150}
+.toast.show{transform:translate(-50%,0)}
+
+/* ===== SKELETON SHIMMER ===== */
+#skeleton{position:fixed;inset:0;z-index:100;background:var(--bg);overflow:hidden;transition:opacity .5s,visibility .5s}
+#skeleton.done{opacity:0;visibility:hidden}
+.sk{background:linear-gradient(100deg,#e4e0d4 30%,#faf7ee 50%,#e4e0d4 70%);background-size:200% 100%;animation:shimmer 1.5s linear infinite;border:var(--border);border-radius:var(--radius)}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+.sk-nav{height:70px;background:var(--paper);border-bottom:var(--border)}
+.sk-nav .container{height:100%;display:flex;align-items:center;justify-content:space-between}
+.sk-logo{width:110px;height:38px}
+.sk-links{display:flex;gap:1rem}.sk-link{width:60px;height:22px;border-radius:6px}
+.sk-hero{display:grid;grid-template-columns:1.3fr 1fr;gap:3rem;align-items:center;padding-block:3.5rem 2rem}
+.sk-badge{width:160px;height:36px;border-radius:999px;margin-bottom:1.5rem}
+.sk-title{height:56px;margin-bottom:1rem}
+.sk-line{height:18px;margin-bottom:.75rem;border-width:2px;border-radius:6px}
+.sk-actions{display:flex;gap:1rem;margin-top:1.75rem}.sk-btn{width:150px;height:52px}
+.sk-avatar{aspect-ratio:1;width:100%;max-width:380px;margin-inline:auto}
+.sk-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;padding-block:1.5rem}
+.sk-card{height:190px}
+.sk-label{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--yellow);border:var(--border);box-shadow:var(--shadow-sm);padding:.4rem 1rem;font-weight:700;border-radius:999px;white-space:nowrap}
+/* Music panel */
+.music-panel{position:fixed;right:1rem;top:84px;z-index:60;width:min(340px,calc(100vw - 2rem));padding:1.1rem;background:var(--blue)}
+.music-panel[hidden]{display:none}
+.mp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem}
+.mp-head h3{font-size:1.1rem;background:var(--yellow);border:var(--border);padding:.15rem .6rem;box-shadow:3px 3px 0 var(--ink)}
+.mp-close{padding:.3rem;box-shadow:3px 3px 0 var(--ink)}
+.mp-info{background:var(--paper);border:var(--border);border-radius:var(--radius);padding:.6rem .9rem;margin-bottom:.9rem}
+.mp-info strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mp-info span{font-size:.85rem}
+.mp-time{display:flex;justify-content:space-between;font-weight:700;font-size:.85rem;margin-top:.3rem}
+.mp-controls{display:flex;justify-content:center;gap:.7rem;margin:.9rem 0}
+.mp-controls .btn{padding:.5rem;width:46px;height:46px;justify-content:center}
+.mp-controls .btn.big{width:56px;height:56px;background:var(--yellow);border-radius:50%}
+.mp-vol{display:flex;align-items:center;gap:.5rem;font-weight:700}
+.music-panel input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:16px;background:var(--paper);border:var(--border);border-radius:99px;cursor:pointer}
+.music-panel input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;background:var(--pink);border:var(--border);border-radius:50%}
+.music-panel input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--pink);border:var(--border);border-radius:50%}
+#musicBtn.playing{background:var(--green)}
+#musicBtn.playing .icon{animation:beat .8s ease-in-out infinite alternate}
+@keyframes beat{to{transform:scale(1.3)}}
+
+/* Responsive */
+@media(max-width:900px){
+.hero-grid,.about-grid,.contact-box,.sk-hero{grid-template-columns:1fr}
+.skills-grid,.projects-grid,.sk-cards{grid-template-columns:repeat(2,1fr)}
+.profile{max-width:380px}.sk-hero .sk-avatar{display:none}}
+@media(max-width:720px){
+.menu-btn{display:inline-flex}
+.nav-links{position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;gap:.5rem;background:var(--paper);border-bottom:var(--border);padding:1rem 1.25rem;display:none}
+.nav-links.open{display:flex}.sk-links{display:none}}
+@media(max-width:560px){
+.skills-grid,.projects-grid,.sk-cards{grid-template-columns:1fr}
+.sk-card:nth-child(n+3){display:none}section{padding-block:3.25rem}}
+@media(prefers-reduced-motion:reduce){
+*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body class="is-loading">
+
+<!-- SVG SPRITE -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+    <symbol id="i-laptop" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20M10 8 7.5 10l2.5 2M14 8l2.5 2-2.5 2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 7H6"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 5-7"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></symbol>
+    <symbol id="i-cap" viewBox="0 0 24 24"><path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/></symbol>
+    <symbol id="i-fork" viewBox="0 0 24 24"><path d="M7 2v8M4 2v6a3 3 0 0 0 6 0V2M7 10v12M17 22V2c-2 1-3 4-3 7s1 4 3 4"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2-.6-1.2.2-2.5 1.6-2.5H17a4 4 0 0 0 4-4c0-5-4-9.5-9-9.5z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+    <symbol id="i-coffee" viewBox="0 0 24 24"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 10h2a2 2 0 0 1 0 4h-2M7 2v3M11 2v3M14 2v3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 4v16M16 4v16"/></symbol>
+<symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 5v14L8 12zM5 5v14"/></symbol>
+<symbol id="i-next" viewBox="0 0 24 24"><path d="M5 5v14l11-7zM19 5v14"/></symbol>
+<symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  </defs>
+</svg>
+
+<!-- SKELETON LOADING -->
+<div id="skeleton" role="status" aria-live="polite" aria-label="Memuat halaman">
+  <div class="sk-nav"><div class="container">
+    <div class="sk sk-logo"></div>
+    <div class="sk-links"><div class="sk sk-link"></div><div class="sk sk-link"></div><div class="sk sk-link"></div></div>
+  </div></div>
+  <div class="container">
+    <div class="sk-hero">
+      <div>
+        <div class="sk sk-badge"></div>
+        <div class="sk sk-title" style="width:92%"></div>
+        <div class="sk sk-title" style="width:70%"></div>
+        <div style="margin-top:1.5rem">
+          <div class="sk sk-line" style="width:100%"></div>
+          <div class="sk sk-line" style="width:88%"></div>
+          <div class="sk sk-line" style="width:60%"></div>
+        </div>
+        <div class="sk-actions"><div class="sk sk-btn"></div><div class="sk sk-btn"></div></div>
+      </div>
+      <div class="sk sk-avatar"></div>
+    </div>
+    <div class="sk-cards"><div class="sk sk-card"></div><div class="sk sk-card"></div><div class="sk sk-card"></div></div>
+  </div>
+  <div class="sk-label">Memuat.........................</div>
+</div>
+
+<!-- NAVBAR -->
+<header class="nav">
+  <div class="container">
+    <a href="#top" class="logo">VaLeN.</a>
+    <button class="btn white menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks">
+      Menu <svg class="icon"><use href="#i-menu"/></svg>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#tentang">Tentang</a></li>
+      <li><a href="#skill">idk</a></li>
+      <li><a href="#proyek">Proyek</a></li>
+      <li><a href="#pengalaman">Pengalaman</a></li>
+      <li><a href="#kontak" class="btn pink">Hubungi Saya</a></li>
+      <li>
+  <button class="btn white" id="musicBtn" aria-expanded="false" aria-controls="musicPanel">
+    <svg class="icon"><use href="#i-music"/></svg> Musik
+  </button>
+</li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="sticker"><svg class="icon"><use href="#i-bolt"/></svg> Tersedia untuk proyek baru</span>
+        <h1>Halo, saya <mark>VaLeN</mark> Web Developer &amp; UI Designer.</h1>
+        <p class="lead">Saya membangun website yang berani, cepat, dan mudah digunakan. Desain tegas, kode rapi, hasil nyata.</p>
+        <div class="hero-actions">
+          <a href="#proyek" class="btn">Lihat Proyek <svg class="icon"><use href="#i-arrow"/></svg></a>
+          <a href="#kontak" class="btn white">Ngobrol Yuk</a>
+        </div>
+      </div>
+      <div class="card profile">
+        <div class="avatar" role="img" aria-label="Ilustrasi laptop"><svg class="icon"><use href="#i-laptop"/></svg></div>
+        <div class="profile-meta"><span>VaLeN</span><span class="status">Online</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE (digandakan lewat JS) -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" id="track">
+      <span>Web Development <svg class="icon"><use href="#i-star"/></svg></span>
+      <span>UI Design <svg class="icon"><use href="#i-star"/></svg></span>
+      <span>Frontend <svg class="icon"><use href="#i-star"/></svg></span>
+      <span>Branding <svg class="icon"><use href="#i-star"/></svg></span>
+    </div>
+  </div>
+
+  <!-- TENTANG -->
+  <section id="tentang">
+    <div class="container">
+      <h2 class="section-title">Tentang Saya</h2>
+      <div class="about-grid">
+        <div class="card about-text">
+          <p>Saya developer asal Indonesia dengan pengalaman lebih dari 1 bulan membuat website dan aplikasi web untuk startup, UMKM, dan agensi kreatif.</p>
+          <p>Saya percaya desain yang bagus itu jujur: kontras tinggi, hierarki jelas, dan tidak membingungkan pengguna. Itulah kenapa saya suka neobrutalism.</p>
+          <p>Di luar kode, saya suka ngopi, main gim indie, dan mengoleksi stiker laptop.</p>
+        </div>
+        <div class="stats">
+          <div class="card stat"><strong>1+</strong><span>Bulan pengalaman</span></div>
+          <div class="card stat"><strong>35</strong><span>Proyek selesai</span></div>
+          <div class="card stat"><strong>20+</strong><span>Klien puas</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILL -->
+  <section id="skill">
+    <div class="container">
+      <h2 class="section-title" style="background:var(--blue)">Skill</h2>
+      <div class="skills-grid">
+        <div class="card skill-card"><h3>Frontend</h3>
+          <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span><span class="tag">React</span><span class="tag">Tailwind</span></div></div>
+        <div class="card skill-card"><h3>Backend</h3>
+          <div class="tags"><span class="tag">Node.js</span><span class="tag">Express</span><span class="tag">PostgreSQL</span><span class="tag">REST API</span></div></div>
+        <div class="card skill-card"><h3>Desain</h3>
+          <div class="tags"><span class="tag">Figma</span><span class="tag">UI/UX</span><span class="tag">Branding</span><span class="tag">Prototyping</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROYEK -->
+  <section id="proyek">
+    <div class="container">
+      <h2 class="section-title" style="background:var(--green)">Proyek Pilihan</h2>
+      <div class="projects-grid">
+        <a href="#" class="card project"><div class="project-thumb"><svg class="icon"><use href="#i-cart"/></svg></div>
+          <div class="project-body"><h3>Toko Online Kopi</h3><p>E-commerce dengan keranjang, pembayaran, dan dashboard admin.</p>
+          <div class="tags"><span class="tag">React</span><span class="tag">Node</span></div></div></a>
+        <a href="#" class="card project"><div class="project-thumb"><svg class="icon"><use href="#i-chart"/></svg></div>
+          <div class="project-body"><h3>Dashboard Analitik</h3><p>Visualisasi data penjualan real-time dengan grafik interaktif.</p>
+          <div class="tags"><span class="tag">Chart.js</span><span class="tag">API</span></div></div></a>
+        <a href="#" class="card project"><div class="project-thumb"><svg class="icon"><use href="#i-phone"/></svg></div>
+          <div class="project-body"><h3>Aplikasi Catatan</h3><p>PWA catatan harian yang tetap bisa dipakai saat offline.</p>
+          <div class="tags"><span class="tag">PWA</span><span class="tag">IndexedDB</span></div></div></a>
+        <a href="#" class="card project"><div class="project-thumb"><svg class="icon"><use href="#i-cap"/></svg></div>
+          <div class="project-body"><h3>Platform Kursus</h3><p>Sistem kelas online dengan video, kuis, dan sertifikat.</p>
+          <div class="tags"><span class="tag">Next.js</span><span class="tag">Postgres</span></div></div></a>
+        <a href="#" class="card project"><div class="project-thumb"><svg class="icon"><use href="#i-fork"/></svg></div>
+          <div class="project-body"><h3>Landing Restoran</h3><p>Website menu dan reservasi dengan animasi ringan dan cepat.</p>
+          <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span></div></div></a>
+        <a href="#" class="card project"><div class="project-thumb"><svg class="icon"><use href="#i-palette"/></svg></div>
+          <div class="project-body"><h3>Design System</h3><p>Pustaka komponen UI neobrutalism yang siap dipakai ulang.</p>
+          <div class="tags"><span class="tag">Figma</span><span class="tag">Storybook</span></div></div></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PENGALAMAN -->
+  <section id="pengalaman">
+    <div class="container">
+      <h2 class="section-title" style="background:var(--orange)">Pengalaman</h2>
+      <div class="timeline">
+        <article class="card job"><span class="date">2023 — Sekarang</span>
+          <h3>Senior Frontend Developer</h3><p><strong>Studio Kreatif Nusantara</strong> — Memimpin tim kecil dan membangun produk web untuk klien nasional.</p></article>
+        <article class="card job"><span class="date">2021 — 2023</span>
+          <h3>Frontend Developer</h3><p><strong>Startup Maju Jaya</strong> — Mengembangkan dashboard dan aplikasi e-commerce dengan React.</p></article>
+        <article class="card job"><span class="date">2020 — 2021</span>
+          <h3>Freelance Web Designer</h3><p><strong>Mandiri</strong> — Membuat website UMKM dan landing page untuk berbagai bisnis lokal.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- KONTAK -->
+  <section id="kontak">
+    <div class="container">
+      <div class="card contact-box">
+        <div>
+          <h2>Yuk, kerja bareng!</h2>
+          <p>Punya ide atau proyek? Kirim pesan dan saya balas maksimal 1×24 jam.</p>
+          <ul class="contact-links">
+            <li><svg class="icon"><use href="#i-mail"/></svg><a href="mailto:valz@via.tokyo.jp">valz@via.tokyo.jp</a></li>
+            <li><svg class="icon"><use href="#i-link"/></svg><a href="#">linkedin.com/in/valen</a></li>
+            <li><svg class="icon"><use href="#i-code"/></svg><a href="#">github.com/404oval</a></li>
+          </ul>
+        </div>
+        <form id="contactForm">
+          <label>Nama <input type="text" name="nama" required placeholder="Nama kamu"></label>
+          <label>Email <input type="email" name="email" required placeholder="email@kamu.com"></label>
+          <label>Pesan <textarea name="pesan" required placeholder="Ceritakan proyekmu..."></textarea></label>
+          <button type="submit" class="btn white">Kirim Pesan <svg class="icon"><use href="#i-send"/></svg></button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span class="f">© <span id="year"></span> Valen <svg class="icon"><use href="#i-coffee"/></svg></span>
+</footer>
+
+<aside class="card music-panel" id="musicPanel" aria-label="Pemutar musik" hidden>
+  <div class="mp-head">
+    <h3>Musik</h3>
+    <button class="btn white mp-close" id="mpClose" aria-label="Tutup pemutar"><svg class="icon"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="mp-info"><strong id="mpTitle">-</strong><span id="mpArtist">-</span></div>
+  <input type="range" id="mpSeek" min="0" max="1000" value="0" aria-label="Posisi lagu">
+  <div class="mp-time"><span id="mpCur">0:00</span><span id="mpDur">0:00</span></div>
+  <div class="mp-controls">
+    <button class="btn white" id="mpPrev" aria-label="Sebelumnya"><svg class="icon"><use href="#i-prev"/></svg></button>
+    <button class="btn big" id="mpPlay" aria-label="Putar"><svg class="icon"><use id="mpIcon" href="#i-play"/></svg></button>
+    <button class="btn white" id="mpNext" aria-label="Berikutnya"><svg class="icon"><use href="#i-next"/></svg></button>
+  </div>
+  <label class="mp-vol"><svg class="icon"><use href="#i-volume"/></svg>
+    <input type="range" id="mpVol" min="0" max="100" value="80" aria-label="Volume">
+  </label>
+</aside>
+
+<div class="toast" id="toast" role="status"><svg class="icon"><use href="#i-check"/></svg> Pesan terkirim!</div>
+
+<script>
+    
+  // ====== PEMUTAR MUSIK ======
+(function () {
+  // Ganti dengan lagu kamu, contoh: src: "lagu/judul.mp3"
+  const list = [
+    { title: "Lagu Contoh 1", artist: "SoundHelix", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+    { title: "Lagu Contoh 2", artist: "SoundHelix", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+    { title: "Lagu Contoh 3", artist: "SoundHelix", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+  ];
+
+  const $ = id => document.getElementById(id);
+  const audio = new Audio();
+  audio.preload = "metadata";
+  audio.volume = 0.8;
+  let i = 0;
+
+  const fmt = s => isFinite(s) ? Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0") : "0:00";
+
+  function load(n, autoplay) {
+    i = (n + list.length) % list.length;
+    audio.src = list[i].src;
+    $("mpTitle").textContent = list[i].title;
+    $("mpArtist").textContent = list[i].artist;
+    $("mpSeek").value = 0;
+    $("mpCur").textContent = "0:00";
+    $("mpDur").textContent = "0:00";
+    if (autoplay) audio.play().catch(() => {});
+  }
+
+  // Buka / tutup panel dari tombol menu
+  function setPanel(open) {
+    $("musicPanel").hidden = !open;
+    $("musicBtn").setAttribute("aria-expanded", open);
+    if (open) $("mpPlay").focus();
+  }
+  $("musicBtn").addEventListener("click", () => {
+    setPanel($("musicPanel").hidden);
+    // tutup menu mobile
+    document.getElementById("navLinks").classList.remove("open");
+    document.getElementById("menuBtn").setAttribute("aria-expanded", "false");
+  });
+  $("mpClose").addEventListener("click", () => { setPanel(false); $("musicBtn").focus(); });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && !$("musicPanel").hidden) { setPanel(false); $("musicBtn").focus(); }
+  });
+
+  // Kontrol
+  $("mpPlay").onclick = () => audio.paused ? audio.play().catch(() => {}) : audio.pause();
+  $("mpNext").onclick = () => load(i + 1, true);
+  $("mpPrev").onclick = () => audio.currentTime > 3 ? (audio.currentTime = 0) : load(i - 1, true);
+  $("mpSeek").oninput = e => { if (audio.duration) audio.currentTime = e.target.value / 1000 * audio.duration; };
+  $("mpVol").oninput = e => audio.volume = e.target.value / 100;
+
+  // Event audio
+  audio.addEventListener("play", () => {
+    $("mpIcon").setAttribute("href", "#i-pause");
+    $("mpPlay").setAttribute("aria-label", "Jeda");
+    $("musicBtn").classList.add("playing");
+  });
+  audio.addEventListener("pause", () => {
+    $("mpIcon").setAttribute("href", "#i-play");
+    $("mpPlay").setAttribute("aria-label", "Putar");
+    $("musicBtn").classList.remove("playing");
+  });
+  audio.addEventListener("loadedmetadata", () => $("mpDur").textContent = fmt(audio.duration));
+  audio.addEventListener("timeupdate", () => {
+    $("mpCur").textContent = fmt(audio.currentTime);
+    if (audio.duration) $("mpSeek").value = audio.currentTime / audio.duration * 1000;
+  });
+  audio.addEventListener("ended", () => load(i + 1, true));
+  audio.addEventListener("error", () => { $("mpArtist").textContent = "Gagal memuat lagu ini"; });
+
+  load(0, false);
+})();
+  // Gandakan marquee 2x (4 -> 8 -> 16 item) agar loop mulus
+  const track = document.getElementById('track');
+  track.innerHTML += track.innerHTML;
+  track.innerHTML += track.innerHTML;
+
+  // Sembunyikan skeleton (minimal 1,8 detik supaya shimmer terlihat)
+  const start = performance.now(), MIN_MS = 1800;
+  function hideSkeleton() {
+    const wait = Math.max(0, MIN_MS - (performance.now() - start));
+    setTimeout(() => {
+      document.getElementById('skeleton').classList.add('done');
+      document.body.classList.remove('is-loading');
+    }, wait);
+  }
+  if (document.readyState === 'complete') hideSkeleton();
+  else window.addEventListener('load', hideSkeleton);
+
+  // Menu mobile
+  const menuBtn = document.getElementById('menuBtn');
+  const navLinks = document.getElementById('navLinks');
+  menuBtn.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open);
+  });
+  navLinks.addEventListener('click', e => {
+    if (e.target.closest('a')) {
+      navLinks.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Form kontak (demo) + toast
+  const toast = document.getElementById('toast');
+  document.getElementById('contactForm').addEventListener('submit', e => {
+    e.preventDefault();
+    e.target.reset();
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  });
+
+  // Tahun footer
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
