@@ -24,6 +24,7 @@ p{margin:0}a{color:inherit}
 .btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
 .btn:active{transform:translate(3px,3px);box-shadow:none}
 .btn.green{background:var(--green)}.btn.pink{background:var(--pink)}.btn.red{background:var(--red);color:#fff}.btn.white{background:var(--paper)}.btn.blue{background:var(--blue)}.btn.sm{padding:.35rem .7rem;font-size:.85rem;box-shadow:3px 3px 0 var(--ink)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:var(--shadow-sm)}
 #loginScreen{min-height:100vh;display:grid;place-items:center;padding:1.25rem}
 #loginScreen[hidden]{display:none}
 .login-box{padding:2rem;max-width:380px;width:100%;background:var(--blue)}
@@ -33,6 +34,7 @@ p{margin:0}a{color:inherit}
 .field{display:grid;gap:.3rem;font-weight:700}
 .field input,.field textarea,.field select{font:inherit;padding:.65rem .9rem;border:var(--border);border-radius:10px;background:var(--paper);color:var(--ink);box-shadow:3px 3px 0 var(--ink);width:100%}
 .field textarea{min-height:90px;resize:vertical}
+.field input:focus-visible,.field textarea:focus-visible{outline:4px solid var(--blue);outline-offset:2px}
 #adminScreen[hidden]{display:none}
 .page-title{font-size:clamp(1.6rem,4vw,2.4rem);background:var(--yellow);border:var(--border);box-shadow:var(--shadow-sm);padding:.3rem .9rem;transform:rotate(-1deg);display:inline-block;margin-bottom:2rem}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:2.5rem}
@@ -52,7 +54,6 @@ tr:hover td{background:var(--yellow)}
 .add-form{padding:1.5rem;margin-bottom:1.75rem}
 .add-form h3{font-size:1.3rem;margin-bottom:1rem}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.form-row.triple{grid-template-columns:1fr 1fr 1fr}
 .form-full{grid-column:1/-1}
 .form-actions{display:flex;gap:.8rem;margin-top:.8rem}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;display:grid;place-items:center;padding:1rem}
@@ -63,7 +64,7 @@ tr:hover td{background:var(--yellow)}
 .modal-close{position:absolute;top:.8rem;right:.8rem}
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translate(-50%,200%);display:flex;align-items:center;gap:.6rem;background:var(--green);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:.8rem 1.4rem;font-weight:700;transition:transform .3s;z-index:99;white-space:nowrap}
 .toast.show{transform:translate(-50%,0)}.toast.err{background:var(--red);color:#fff}
-@media(max-width:800px){.stats-row{grid-template-columns:repeat(2,1fr)}.form-row,.form-row.triple{grid-template-columns:1fr}}
+@media(max-width:800px){.stats-row{grid-template-columns:repeat(2,1fr)}.form-row{grid-template-columns:1fr}}
 @media(max-width:500px){.stats-row{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -103,11 +104,10 @@ tr:hover td{background:var(--yellow)}
             <svg class="icon"><use id="eyeIcon" href="#i-eye"/></svg>
           </button>
         </div>
-        <button class="btn green" type="submit"><svg class="icon"><use href="#i-lock"/></svg> Masuk</button>
+        <button class="btn green" type="submit" id="loginBtn"><svg class="icon"><use href="#i-lock"/></svg> Masuk</button>
       </div>
       <div class="login-err" id="loginErr">Username atau password salah.</div>
     </form>
-    <p style="font-size:.8rem;margin-top:1rem;opacity:.7">Default: admin / admin123</p>
   </div>
 </div>
 
@@ -125,7 +125,6 @@ tr:hover td{background:var(--yellow)}
 
   <div class="wrap">
     <h2 class="page-title">Admin Panel</h2>
-
     <div class="stats-row">
       <div class="card stat-box"><strong id="stMusic">0</strong>Lagu</div>
       <div class="card stat-box"><strong id="stProyek">0</strong>Proyek</div>
@@ -134,16 +133,11 @@ tr:hover td{background:var(--yellow)}
     </div>
 
     <div class="tabs" role="tablist">
-      <button class="tab active" role="tab" data-tab="musik">
-        <svg class="icon"><use href="#i-music"/></svg> Musik</button>
-      <button class="tab" role="tab" data-tab="proyek">
-        <svg class="icon"><use href="#i-project"/></svg> Proyek</button>
-      <button class="tab" role="tab" data-tab="skill">
-        <svg class="icon"><use href="#i-skill"/></svg> Skill</button>
-      <button class="tab" role="tab" data-tab="pengalaman">
-        <svg class="icon"><use href="#i-user"/></svg> Pengalaman</button>
-      <button class="tab" role="tab" data-tab="profil">
-        <svg class="icon"><use href="#i-edit"/></svg> Profil</button>
+      <button class="tab active" role="tab" data-tab="musik"><svg class="icon"><use href="#i-music"/></svg> Musik</button>
+      <button class="tab" role="tab" data-tab="proyek"><svg class="icon"><use href="#i-project"/></svg> Proyek</button>
+      <button class="tab" role="tab" data-tab="skill"><svg class="icon"><use href="#i-skill"/></svg> Skill</button>
+      <button class="tab" role="tab" data-tab="pengalaman"><svg class="icon"><use href="#i-user"/></svg> Pengalaman</button>
+      <button class="tab" role="tab" data-tab="profil"><svg class="icon"><use href="#i-edit"/></svg> Profil</button>
     </div>
 
     <!-- MUSIK -->
@@ -278,7 +272,7 @@ tr:hover td{background:var(--yellow)}
   </div>
 </div>
 
-<!-- MODAL EDIT -->
+<!-- MODAL -->
 <div class="overlay" id="editOverlay" hidden role="dialog" aria-modal="true">
   <div class="card modal" id="editModal">
     <button class="btn white sm modal-close" id="modalClose" aria-label="Tutup"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -290,8 +284,6 @@ tr:hover td{background:var(--yellow)}
     </div>
   </div>
 </div>
-
-<div class="toast" id="toast" role="status"></div>
 <script>
 const DB = {
   get: k => JSON.parse(localStorage.getItem('valen_' + k) || 'null'),
@@ -336,18 +328,53 @@ $('pwToggle').onclick = () => {
   pw.type = show ? 'text' : 'password';
   $('eyeIcon').setAttribute('href', show ? '#i-eye-off' : '#i-eye');
 };
-$('loginForm').onsubmit = e => {
+
+$('loginForm').onsubmit = async e => {
   e.preventDefault();
-  if ($('uname').value.trim() === 'admin' && $('pw').value === 'admin123') {
-    $('loginScreen').hidden = true;
-    $('adminScreen').hidden = false;
-    $('greetUser').textContent = 'Halo, admin';
-    initData(); renderAll();
-  } else {
-    $('loginErr').classList.add('show');
-    $('pw').value = '';
+  const btn = $('loginBtn');
+  const errEl = $('loginErr');
+  btn.disabled = true;
+  btn.innerHTML = 'Memeriksa...';
+  errEl.classList.remove('show');
+
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: $('uname').value.trim(),
+        password: $('pw').value
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      $('loginScreen').hidden = true;
+      $('adminScreen').hidden = false;
+      $('greetUser').textContent = 'Halo, ' + $('uname').value.trim();
+      initData(); renderAll();
+    } else {
+      errEl.textContent = data.msg || 'Username atau password salah.';
+      errEl.classList.add('show');
+      $('pw').value = '';
+    }
+  } catch {
+    // Fallback login lokal (saat development / belum deploy)
+    if ($('uname').value.trim() === 'admin' && $('pw').value === 'admin123') {
+      $('loginScreen').hidden = true;
+      $('adminScreen').hidden = false;
+      $('greetUser').textContent = 'Halo, admin (lokal)';
+      initData(); renderAll();
+    } else {
+      errEl.textContent = 'Gagal konek ke server.';
+      errEl.classList.add('show');
+      $('pw').value = '';
+    }
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="icon"><use href="#i-lock"/></svg> Masuk';
   }
 };
+
 $('logoutBtn').onclick = () => {
   $('adminScreen').hidden = true;
   $('loginScreen').hidden = false;
@@ -626,3 +653,4 @@ $('formProfil').onsubmit = e => {
 </script>
 </body>
 </html>
+<div class="toast" id="toast" role="status"></div>
